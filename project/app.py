@@ -1,4 +1,4 @@
-import sqlite3, os
+import os
 from pathlib import Path
 
 from flask import Flask, g, render_template, request, session, \
@@ -6,38 +6,36 @@ from flask import Flask, g, render_template, request, session, \
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 
-
-
 basedir = Path(__file__).resolve().parent
 
-
-# configuration
+# Configuration
 DATABASE = "flaskr.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
-SQLALCHEMY_DATABASE_URI = f'sqlite:///{Path(basedir).joinpath(DATABASE)}'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
-
-
-# create and initialize a new Flask app
+# Create and initialize a new Flask app
 app = Flask(__name__)
-# load the config
-app.config.from_object(__name__)
-# init sqlalchemy
-db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['USERNAME'] = USERNAME
+app.config['PASSWORD'] = PASSWORD
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
+# Get the database URL from the environment variable
 url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
 
+# Replace 'postgres://' with 'postgresql://' if needed
 if url.startswith("postgres://"):
     url = url.replace("postgres://", "postgresql://", 1)
 
-SQLALCHEMY_DATABASE_URI = url
+# Set the database URI
+app.config['SQLALCHEMY_DATABASE_URI'] = url
+
+# Initialize SQLAlchemy
+db = SQLAlchemy(app)
 
 from project import models
-
 
 @app.route('/')
 def index():
