@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/maleksibai/Desktop/ECE444 Practical/flaskr-tdd/env/bin/python3.12" "$0" "$@"
+'''exec' "/Users/maleksibai/Desktop/ECE444 Practical/E444_F2024_PRA3/env/bin/python3.12" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re
