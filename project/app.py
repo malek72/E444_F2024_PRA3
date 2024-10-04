@@ -1,36 +1,38 @@
 import sqlite3
 from pathlib import Path
-
-from flask import Flask, g, render_template, request, session, \
-                  flash, redirect, url_for, abort, jsonify
+from flask import Flask, g, render_template, request, session, flash, redirect, url_for, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate  # Import Flask-Migrate
 from functools import wraps
 import os
 
-
 basedir = Path(__file__).resolve().parent
 
-# configuration
+# Configuration
 DATABASE = "flaskr.db"
 USERNAME = "admin"
 PASSWORD = "admin"
 SECRET_KEY = "change_me"
 url = os.getenv('DATABASE_URL', f'sqlite:///{Path(basedir).joinpath(DATABASE)}')
 
+# Adjust the database URL for PostgreSQL if necessary
 if url.startswith("postgres://"):
     url = url.replace("postgres://", "postgresql://", 1)
 
 SQLALCHEMY_DATABASE_URI = url
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-
-# create and initialize a new Flask app
+# Create and initialize a new Flask app
 app = Flask(__name__)
-# load the config
+# Load the config
 app.config.from_object(__name__)
-# init sqlalchemy
+# Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
+# Initialize Flask-Migrate
+migrate = Migrate(app, db)
+
+# Import models after initializing db and migrate
 from project import models
 
 
